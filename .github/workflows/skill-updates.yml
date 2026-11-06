@@ -1,0 +1,76 @@
+name: Skill update monitor
+
+on:
+  schedule:
+    - cron: '0 2 * * 1' # Monday 09:00 Vietnam (UTC+7); GitHub may delay execution.
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'research/**'
+      - 'scripts/check_skill_updates.py'
+      - 'tests/**'
+      - '.github/workflows/skill-updates.yml'
+  pull_request:
+    paths:
+      - 'research/**'
+      - 'scripts/check_skill_updates.py'
+      - 'tests/**'
+      - '.github/workflows/skill-updates.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: skill-updates-${{ github.event_name == 'pull_request' && github.event.pull_request.number || 'monitor' }}
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python3 -m unittest discover -s tests -v
+
+  check:
+    if: github.event_name != 'pull_request'
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Inspect upstream and update notification issue
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 scripts/check_skill_updates.py --issue --output reports
+      - name: Add run summary
+        if: always()
+        shell: bash
+        run: |
+          if test -f reports/skill-updates.md; then
+            cat reports/skill-updates.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'Checker did not produce a report; inspect the failed step.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Retain report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: skill-update-report
+          path: reports/
+          if-no-files-found: warn
+          retention-days: 90
