@@ -110,3 +110,7 @@ có [file HTML offline](examples/desert-eagle-viewer/demo.html), camera tương 
 hai màu bề mặt và bố cục mobile. Tải HTML về rồi mở bằng trình duyệt hỗ trợ WebGL.
 [Báo cáo đánh giá](research/evaluations/2026-11-06-teardown-codex.md) phân biệt
 khả năng đã kiểm chứng, chất lượng hình và những phần chưa thử.
+
+Bản mới **[Desert Eagle — Reference Console](examples/desert-eagle-console/README.md)**
+chuyển thể bố cục và cấu trúc `v8-live` của tác giả, có tour 24 giây và thông số
+camera/vật liệu đồng bộ với cảnh. [Mở HTML offline](examples/desert-eagle-console/demo.html).

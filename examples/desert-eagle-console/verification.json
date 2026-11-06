@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "errors": [],
+  "network": [],
+  "overflow": false,
+  "pureCapture": true,
+  "checks": [
+    "tour frames",
+    "pixel-identical repeated 3D canvas",
+    "pause",
+    "camera",
+    "finish",
+    "roughness",
+    "light",
+    "feature",
+    "labels",
+    "reset",
+    "drag",
+    "zoom",
+    "scrub",
+    "PNG export",
+    "landscape",
+    "portrait hint",
+    "reduced motion"
+  ],
+  "stats": {
+    "calls": 105,
+    "triangles": 36582
+  }
+}
