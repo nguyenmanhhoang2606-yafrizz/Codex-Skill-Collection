@@ -102,3 +102,11 @@ Chỉ ghi nhận sau khi đã đánh giá; checker không tự tạo đánh giá
 các commit/hunk đã lấy và phụ thuộc liên quan; không đổi commit nền thành HEAD mới
 nếu bản đang dùng chưa chứa toàn bộ phiên bản đó. Cập nhật cài đặt vẫn cần yêu cầu
 của người dùng. Mã nguồn backup và giấy phép không bị workflow thay đổi.
+
+## Thử nghiệm teardown với Codex
+
+Mẫu [Desert Eagle — nghiên cứu ngoại hình](examples/desert-eagle-viewer/README.md)
+có [file HTML offline](examples/desert-eagle-viewer/demo.html), camera tương tác,
+hai màu bề mặt và bố cục mobile. Tải HTML về rồi mở bằng trình duyệt hỗ trợ WebGL.
+[Báo cáo đánh giá](research/evaluations/2026-11-06-teardown-codex.md) phân biệt
+khả năng đã kiểm chứng, chất lượng hình và những phần chưa thử.
