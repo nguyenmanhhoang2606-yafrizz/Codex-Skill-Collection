@@ -1,0 +1,33 @@
+{
+  "duration": 26,
+  "beats": [
+    {
+      "t": 0,
+      "label": "Hero"
+    },
+    {
+      "t": 4,
+      "label": "Side contour"
+    },
+    {
+      "t": 8,
+      "label": "Grip detail"
+    },
+    {
+      "t": 12,
+      "label": "Top silhouette"
+    },
+    {
+      "t": 16,
+      "label": "Graphite"
+    },
+    {
+      "t": 20,
+      "label": "Silver"
+    },
+    {
+      "t": 24,
+      "label": "Return"
+    }
+  ]
+}

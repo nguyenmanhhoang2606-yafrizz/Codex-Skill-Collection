@@ -1,0 +1,24 @@
+{
+  "canonical_source": "https://github.com/elvarofficial/teardown",
+  "commit": "a91262ac1109051e014662d42ecb0b7bc1f113b1",
+  "example": "v8-live / v8-shared",
+  "claude_demo_used_as_source": false,
+  "files": {
+    "console.js": {
+      "upstream_sha256": "f5f181172260af44862137f60466cd02ebee8d94011d36fa92fce04f4c4a7ef9",
+      "local_sha256": "820e351a5391c619d8ea9ef02974651a2110edd82c4ed7bdd48e42df9ac3f283"
+    },
+    "stage.js": {
+      "upstream_sha256": "ef4308bade3a190dfa62482f6ac117737ff333d29450dba989e6a6b0f5ae92de",
+      "local_sha256": "e0d6eaf327d81e0ebb7bfeb61af5a9eab6106241cd64bab92eef96a33905a99a"
+    },
+    "film.js": {
+      "upstream_sha256": "54e1a893436c0a12558b142aac4bd9387bb50f3332f4e4248504b9a1f8134b00",
+      "local_sha256": "aa565260387373a8d8a0e85a81792a1f86d9cd9cf3f6d47b6bd0e1066faeca0c"
+    },
+    "live.js": {
+      "upstream_sha256": "5ebf6e53cf776831f2dddc46ccb7e33c81487cdb8cf80c1dfd335a1d37b0ba81",
+      "local_sha256": "b07a3ed5e3183f9ba42dd85d5793c3fae7a1982bc79a01c313b6445a019f540d"
+    }
+  }
+}

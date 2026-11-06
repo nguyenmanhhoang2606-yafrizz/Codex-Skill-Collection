@@ -114,3 +114,9 @@ khả năng đã kiểm chứng, chất lượng hình và những phần chưa 
 Bản mới **[Desert Eagle — Reference Console](examples/desert-eagle-console/README.md)**
 chuyển thể bố cục và cấu trúc `v8-live` của tác giả, có tour 24 giây và thông số
 camera/vật liệu đồng bộ với cảnh. [Mở HTML offline](examples/desert-eagle-console/demo.html).
+
+Bản **[Desert Eagle — V8 Reference Edition](examples/desert-eagle-v8/README.md)**
+lấy trực tiếp `v8-live/v8-shared` làm chuẩn, giữ nguyên vị trí bảy panel và
+hệ thống thiết kế của tác giả. [Demo offline](examples/desert-eagle-v8/demo.html) ·
+[Ảnh đối chiếu V8/bản mới/bản cũ](examples/desert-eagle-v8/comparison.png).
+Không dùng demo Claude làm nguồn triển khai.

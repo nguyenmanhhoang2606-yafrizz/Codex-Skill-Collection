@@ -35,6 +35,27 @@ Không tự thêm một quy trình riêng của lĩnh vực này vào skill thu�
 khác. Chỉ áp dụng yêu cầu tham chiếu, ví dụ, template, kiểm thử hoặc hình thức
 bàn giao khi skill hoặc tác vụ thực sự yêu cầu chúng.
 
+## Chuẩn sản phẩm khi dùng skill có demo
+
+- Lấy các sản phẩm mẫu được chính hướng dẫn skill chỉ định làm chuẩn triển khai
+  và nghiệm thu. Chọn mẫu phù hợp nhất, đọc mã liên quan, build và mở mẫu thật
+  trước khi sửa. Khi skill yêu cầu copy example, bắt đầu từ mã example đó.
+- Giữ hệ thống thiết kế và các tương tác áp dụng của mẫu: bố cục, typography,
+  màu, kích thước, khoảng cách, camera, ánh sáng, chuyển cảnh và điều khiển.
+  Chỉ đổi phần cần thiết cho đối tượng/nội dung mới; ghi rõ từng sai khác.
+- Không tự thay mẫu chuẩn bằng output của một AI khác, UI tự thiết kế, hoặc
+  diễn giải "lấy cảm hứng". File người dùng đưa để so sánh không tự trở thành
+  template. Chỉ đổi chuẩn khi người dùng yêu cầu rõ ràng.
+- Ảnh đối tượng quyết định hình dáng/vật liệu; demo của skill quyết định cách
+  trình bày và tương tác. Phân biệt hai vai trò này trong checklist.
+- Nghiệm thu cả chức năng lẫn hình ảnh: chụp mẫu gốc và bản mới cùng viewport,
+  đối chiếu các panel, typography, composition và các mốc chuyển động; tự sửa
+  sai khác ngoài chủ đích trước khi bàn giao. Build/test pass không chứng minh
+  độ giống UI hoặc chất lượng mô hình. Nêu rõ phần chưa đạt.
+- Với teardown: dùng các example V8, Cessna hoặc Strandbeest theo SKILL.md;
+  tác vụ Desert Eagle hiện tại chọn **v8-live/v8-shared**. Demo Claude chỉ là
+  tài liệu so sánh, không phải nguồn triển khai hay chuẩn giao diện.
+
 ## At the start of a task
 
 Unless the user asks you to wait/stop or the task explicitly excludes network

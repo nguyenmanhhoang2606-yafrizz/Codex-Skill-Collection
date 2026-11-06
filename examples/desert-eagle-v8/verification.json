@@ -1,0 +1,113 @@
+{
+  "passed": true,
+  "checks": [
+    "all timeline beats and settled views captured",
+    "pure state and pixel-identical 3D render at arbitrary time",
+    "all 7 panel rectangles, title typography and transport geometry match original V8",
+    "all five camera controls",
+    "all three finishes change actual material",
+    "all four display toggles",
+    "surface selection and highlight",
+    "timeline and speed sliders",
+    "reset and angle stepping",
+    "drag orbit and wheel zoom",
+    "PNG download",
+    "overlay keyboard toggle",
+    "landscape fit and portrait hint",
+    "reduced motion",
+    "offline, no browser errors, under 1 MB"
+  ],
+  "errors": [],
+  "network": [],
+  "canonicalLayout": {
+    "panels": [
+      [
+        "35px",
+        "274px",
+        "247px",
+        "208px"
+      ],
+      [
+        "35px",
+        "490px",
+        "247px",
+        "192px"
+      ],
+      [
+        "35px",
+        "774px",
+        "259px",
+        "111px"
+      ],
+      [
+        "1318px",
+        "36px",
+        "245px",
+        "209px"
+      ],
+      [
+        "1318px",
+        "252px",
+        "245px",
+        "184px"
+      ],
+      [
+        "1318px",
+        "443px",
+        "245px",
+        "150px"
+      ],
+      [
+        "1296px",
+        "720px",
+        "268px",
+        "165px"
+      ]
+    ],
+    "type": [
+      [
+        "Inter, system-ui, sans-serif",
+        "9.4px",
+        "500",
+        "1.7px"
+      ]
+    ],
+    "buttons": [
+      [
+        "45px",
+        "782px",
+        "99px",
+        "26px"
+      ],
+      [
+        "149px",
+        "782px",
+        "66px",
+        "26px"
+      ],
+      [
+        "219px",
+        "782px",
+        "66px",
+        "26px"
+      ]
+    ]
+  },
+  "renderer": "Chromium / SwiftShader",
+  "limits": [
+    "not an integrated-GPU benchmark",
+    "no firearm operation or internal mechanism",
+    "portrait uses original scaled console",
+    "no controlled reasoning-effort A/B test"
+  ],
+  "full_quality_smoke": {
+    "passed": true,
+    "viewport": [
+      1280,
+      720
+    ],
+    "tier": 0,
+    "gtao": true,
+    "image": "studio-full.png"
+  }
+}
