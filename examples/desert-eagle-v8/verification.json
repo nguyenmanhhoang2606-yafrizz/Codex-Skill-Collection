@@ -100,14 +100,20 @@
     "portrait uses original scaled console",
     "no controlled reasoning-effort A/B test"
   ],
+  "regressions": {
+    "passed": true,
+    "checks": 14,
+    "report": "../../research/evaluations/de-v8-fixes/regressions-after.json"
+  },
+  "html_sha256": "b2a15524b7a9f6d6f9a57e315f7721dca1a9e193d7688e274a741e35319b585a",
   "full_quality_smoke": {
     "passed": true,
+    "tier": 0,
+    "gtao": true,
     "viewport": [
       1280,
       720
     ],
-    "tier": 0,
-    "gtao": true,
     "image": "studio-full.png"
   }
 }

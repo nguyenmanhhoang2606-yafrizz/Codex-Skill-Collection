@@ -1,0 +1,28 @@
+{
+  "feature7Focus": {
+    "canvasUnchanged": true,
+    "feature": 6
+  },
+  "spaceOnPause": {
+    "before": true,
+    "after": true
+  },
+  "dragChart": {
+    "down": 5.2,
+    "afterDrag": 5.2
+  },
+  "inspectSelection": {
+    "cameraUnchanged": true
+  },
+  "resumeSpeed": {
+    "requested": 1.5,
+    "actual": 1
+  },
+  "reducedMotionPlay": {
+    "paused": false,
+    "before": 0,
+    "after": 0
+  },
+  "v8UI": "V8 · Four-Stroke\n90° CROSS-PLANE  •  FIRING ORDER 1-8-4-3-6-5-7-2  •  5.8 L\n700\n8000\n0\nREV / MIN\nCrankshaft\nSLIDER-CRANK\n138° AFTER TDC\nr\nL\nSTROKE 89 MM\ns = r·cos φ + √(L² − r² sin²φ)\nr 4.4 cm  ·  L 14.5 cm\nCROSS-PLANE CRANK\nFRONT VIEW\nR BANK\nL BANK\n1·2\n3·4\n5·6\n7·8\n90°\nJournals 90° apart  ·  banks at ±45°\n❚❚  PAUSE\n−15°\n+15°\nENGINE SPEED\n700 RPM\nPLAYBACK\n1 / 20 SPEED\nAIR & FUEL\nCOMPRESSED\nCOMBUSTION\nEXHAUST\nCYLINDER 1\n138° CRANK\nPower\nINTAKE\nCOMPRESSION\nPOWER\nEXHAUST\n3.1\nBAR\nCHAMBER PRESSURE\nVALVE TIMING\nDRAG TO SCRUB\n— PISTON 9 %   — IN 0.00   — EX 0.00\n%\n0\n50\n100\nPOWER\nEXHAUST\nINTAKE\nCOMPR\n0\n180\n360\n540\n720\nCRANK ANGLE AFTER IGNITION\nINDICATOR DIAGRAM\nCYL 1\nbar\n50\n25\n0\nIGNITION\nEXPANSION\nCOMPRESSION\nTDC\nBDC\nVOLUME ×VC · 1 → 10.2\nCAMERA\nHERO\nFRONT\nSIDE\nVALLEY\nCYL\nCUTAWAY\nGLASS\nSECTION\nSOLID\nOVERLAYS\nCALLOUTS\nCHARGE\nARROWS\nISOLATE\nREFRACT\nCHARTS\nFIRING ORDER  —  CLICK TO TRACK\n1\n8\n4\n3\n6\n5\n7\n2\nONE POWER STROKE EVERY 90° OF CRANK ROTATION\nDRAG TO ORBIT  ·  SCROLL TO ZOOM  ·  H HIDES THE OVERLAY\nCamshaft\nHALF CRANK SPEED\nFlywheel\nSTORES THE PULSES\nHelical timing gears\n24 : 72\n▶ RESUME TOUR",
+  "claudeUI": ".50 AE\nGAS-OPERATED SELF-LOADING PISTOL\nDesert Eagle /\nHAMMER / ROTATING BOLT / GAS PISTON\nSLOW MOTION · ONE SHOT\n//////\n.50\nGAS\nBOLT\nHAMMER\nACTION STATE\n01\nSafe\nSAFETY ON · HAMMER COCKED\nBOLT LOCKED\nSLIDE\nBARREL\nHAMMER\nREADOUTS\n02\n0.0\nMM\nSLIDE TRAVEL\nBOLT TURN\n0°\nHAMMER\nCOCKED\nGAS CYLINDER\n0%\nBORE\n0%\nMISSION CLOCK\nT+ 00.2 S\nSPEC CARD\n03\nDESERT EAGLE · SINGLE ACTION\nGas from a port in the barrel pushes a piston on the slide. The slide runs back, the bolt turns to unlock, the case is thrown out and the hammer is recocked. The spring brings it home and feeds the next round.\n.50 AE\nCALIBRE\n8+1\nROUNDS\n152\nMM BARREL\nSEQUENCE\n04\nSAFE\nFIRE\nUNLOCK\nEJECT\nFEED\nLOCK\nVIEWS\n05\nHERO\nSIDE\nBOLT\nGAS\nMAG\nINSIDE\nDISPLAY\n06\nLABELS\nSECTION\nX-RAY\nEXPLODED\nORBIT\nOPERATION\n07\n❚❚\nSAFE\nSAFE · SAFETY ON, HAMMER COCKED\nREADY\n00:00 / 00:16\nSPEED\n1.0×\nGAS PRESSURE\n08\n100%\nSTRIKE\nSLIDE AT THE REAR\nBORE\nGAS CYLINDER\nBORE 0% GAS CYLINDER 0%\nQUALITATIVE SHAPE · NOT MEASURED DATA\nINTERNAL DIMENSIONS ARE ESTIMATES\nMECHANISM STUDY  ·  PROCEDURAL MODEL  ·  ONE CLOCK DRIVES EVERY PART\nSTYLISED FROM PUBLISHED SPECS //////\nRINGS ON\nTHE FLOOR\n= 100 MM\n▶ RESUME TOUR"
+}

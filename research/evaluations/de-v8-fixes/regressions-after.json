@@ -1,0 +1,61 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "name": "Focus changes the rendered marking, not just state",
+      "passed": true
+    },
+    {
+      "name": "Space on focused Pause toggles exactly once",
+      "passed": true
+    },
+    {
+      "name": "Chart scrubs continuously while dragging",
+      "passed": true
+    },
+    {
+      "name": "Selecting a surface reframes its actual region",
+      "passed": true
+    },
+    {
+      "name": "Resume Tour retains chosen playback speed",
+      "passed": true
+    },
+    {
+      "name": "Reduced-motion preference still allows explicit Play",
+      "passed": true
+    },
+    {
+      "name": "Visible focus for surface 1",
+      "passed": true
+    },
+    {
+      "name": "Visible focus for surface 2",
+      "passed": true
+    },
+    {
+      "name": "Visible focus for surface 3",
+      "passed": true
+    },
+    {
+      "name": "Visible focus for surface 4",
+      "passed": true
+    },
+    {
+      "name": "Visible focus for surface 5",
+      "passed": true
+    },
+    {
+      "name": "Visible focus for surface 6",
+      "passed": true
+    },
+    {
+      "name": "Visible focus for surface 7",
+      "passed": true
+    },
+    {
+      "name": "Visible focus for surface 8",
+      "passed": true
+    }
+  ]
+}

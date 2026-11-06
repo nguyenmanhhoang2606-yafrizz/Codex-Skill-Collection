@@ -2,7 +2,7 @@
 import {warmComposer} from 'teardown-kit/warm.js';
 import {createConsole,CAMS,CUTS,OVERLAYS} from './console.js';
 import {createV8Stage} from './stage.js';
-import {stateAt,VIEWS,FEATURES,DURATION,makeCursor,drawFrame} from './film.js';
+import {stateAt,VIEWS,FEATURES,DURATION,makeCursor,drawFrame,inspectCamera,blendCamera,smooth} from './film.js';
 const W=1600,H=900;
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const CSS = (top) => `
@@ -37,41 +37,122 @@ export async function runLive(){
  const chip=document.createElement('div');chip.className='tourchip';chip.setAttribute('role','button');chip.tabIndex=0;ui.root.append(chip);
  const note=document.createElement('div');note.className='turn';note.textContent='Turn your phone sideways for the full console';document.body.append(note);
  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
- let time=0,current=stateAt(0),manual=structuredClone(current),auto=!reduce,explicitPause=reduce,drag=null,lastInput=performance.now(),last=lastInput,hidden=false;
- if(reduce)manual.paused=true;
- function render(s,cur={x:-99,y:-99,press:false,ring:0,ringX:0,ringY:0}){current=structuredClone(s);drawFrame(st,ui,current,cur);chip.classList.toggle('on',auto);chip.innerHTML=auto?'<i></i>AUTO TOUR · CLICK TO TAKE OVER':'▶ RESUME TOUR';}
- function takeover(){if(auto)manual=structuredClone(current);auto=false;lastInput=performance.now();return manual;}
- function start(){auto=true;explicitPause=false;last=performance.now();}
- function toggle(){if(auto){takeover();manual.paused=true;explicitPause=true;render(manual);}else start();}
- chip.onclick=toggle;chip.onkeydown=e=>{if(e.key==='Enter')toggle();};
- for(const [k,b]of Object.entries(ui.btn)){b.id='control-'+k;b.setAttribute('role','button');b.tabIndex=0;b.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();b.click();}};}
- for(const k of CAMS)ui.btn[k].onclick=()=>{const s=takeover();s.cam=k;s.camera={...VIEWS[k]};render(s);};
- for(const k of CUTS)ui.btn[k].onclick=()=>{const s=takeover();s.cut=k;s.roughness=k==='clay'?.8:.47;render(s);};
- for(const k of OVERLAYS)ui.btn[k].onclick=()=>{if(k==='reset'){takeover();time=0;manual=stateAt(0);manual.paused=true;explicitPause=true;render(manual);return;}if(k==='save'){takeover();canvas.toBlob(blob=>{if(!blob)return;const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download='desert-eagle-v8.png';a.click();setTimeout(()=>URL.revokeObjectURL(u),10000);});return;}const s=takeover();s.overlays[k]=!s.overlays[k];render(s);};
- ui.btn.pause.onclick=()=>{const s=takeover();s.paused=!s.paused;explicitPause=s.paused;render(s);};
- for(const [k,delta]of [['back',-15],['fwd',15]])ui.btn[k].onclick=()=>{const s=takeover();s.camera.az+=delta;s.paused=true;explicitPause=true;render(s);};
- for(let i=0;i<FEATURES.length;i++){const [x,y]=ui.foSpot(i),b=document.createElement('div');b.className='hit';b.id='feature-'+i;b.setAttribute('role','button');b.setAttribute('aria-label',FEATURES[i].name);b.tabIndex=0;Object.assign(b.style,{left:x-15+'px',top:y-15+'px',width:'30px',height:'30px',borderRadius:'50%'});b.onclick=()=>{const s=takeover();s.feature=i;s.overlays.focus=true;render(s);};b.onkeydown=e=>{if(e.key==='Enter')b.click();};ui.root.append(b);}
- const slider=(id,y,min,max,step,value,fn)=>{const el=document.createElement('input');el.type='range';el.id=id;el.min=min;el.max=max;el.step=step;el.value=value;el.setAttribute('aria-label',id);el.style.cssText=`position:absolute;left:38px;top:${y-11}px;width:254px;height:22px;opacity:0;pointer-events:auto;cursor:ew-resize;margin:0`;el.oninput=()=>{takeover();fn(Number(el.value));render(manual);};ui.root.append(el);return el;};
- const seek=slider('tour-position',836,0,DURATION,.01,0,v=>{time=v;const speed=manual.speed;manual=stateAt(v);manual.speed=speed;manual.paused=true;explicitPause=true;});
- const speed=slider('tour-speed',869,.25,2,.05,1,v=>manual.speed=v);
- ui.plot.style.pointerEvents='auto';ui.plot.style.cursor='ew-resize';ui.plot.onpointerdown=e=>{const r=ui.plot.getBoundingClientRect();seek.value=clamp((e.clientX-r.left)/r.width,0,1)*DURATION;seek.dispatchEvent(new Event('input'));};
+ let time=0,playbackSpeed=1,current=stateAt(0),manual=structuredClone(current);
+ let auto=!reduce,explicitPause=reduce,drag=null,scrubPointer=null,transition=null;
+ let lastInput=performance.now(),last=lastInput,hidden=false;
+ manual.paused=true;
+ const idleCursor={x:-99,y:-99,press:false,ring:0,ringX:0,ringY:0};
+ function render(s,cur=idleCursor){
+  current=structuredClone({...s,speed:playbackSpeed,transitioning:!!transition});
+  drawFrame(st,ui,current,cur);
+  chip.classList.toggle('on',auto&&!reduce);
+  chip.innerHTML=auto?'<i></i>AUTO TOUR · CLICK TO TAKE OVER':'▶ RESUME TOUR';
+  chip.setAttribute('aria-label',auto?'Pause tour':'Resume tour');
+  for(const [k,b] of Object.entries(ui.btn)){
+   const pressed=CAMS.includes(k)?current.cam===k:CUTS.includes(k)?current.cut===k:k==='pause'?current.paused:!!current.overlays[k];
+   if(!['reset','save'].includes(k))b.setAttribute('aria-pressed',String(pressed));
+  }
+ }
+ function takeover(){
+  manual=structuredClone(current);time=current.time;auto=false;manual.paused=true;
+  transition=null;lastInput=performance.now();explicitPause=false;return manual;
+ }
+ function beginTransition(target){
+  if(reduce){manual.camera={...target};transition=null;}
+  else transition={from:{...current.camera},to:{...target},elapsed:0,duration:.85};
+ }
+ function start(){
+  time=current.time>=DURATION?0:current.time;auto=true;explicitPause=false;last=performance.now();
+  beginTransition(stateAt(time).camera);
+  const s=stateAt(time);if(transition)s.camera={...current.camera};render(s,cursor(time));
+ }
+ function pause(){const s=takeover();explicitPause=true;render(s);}
+ function toggle(){if(auto)pause();else start();}
+ function activateWithKeyboard(e){if((e.key==='Enter'||e.key===' ')&&!e.repeat){e.preventDefault();e.stopPropagation();e.currentTarget.click();}}
+ chip.onclick=toggle;chip.onkeydown=activateWithKeyboard;
+ for(const [k,b]of Object.entries(ui.btn)){
+  b.id='control-'+k;b.setAttribute('role','button');b.tabIndex=0;b.onkeydown=activateWithKeyboard;
+ }
+ for(const k of CAMS)ui.btn[k].onclick=()=>{
+  const s=takeover();s.cam=k;s.stepLabel='Manual camera';beginTransition(VIEWS[k]);render(s);
+ };
+ for(const k of CUTS)ui.btn[k].onclick=()=>{
+  const s=takeover();s.cut=k;s.roughness=k==='clay'?.8:.47;s.stepLabel='Finish inspection';render(s);
+ };
+ for(const k of OVERLAYS)ui.btn[k].onclick=()=>{
+  if(k==='reset'){
+   takeover();time=0;manual=stateAt(0);manual.paused=true;explicitPause=true;render(manual);return;
+  }
+  if(k==='save'){
+   const s=takeover();render(s);
+   canvas.toBlob(blob=>{if(!blob)return;const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download='desert-eagle-v8.png';a.click();setTimeout(()=>URL.revokeObjectURL(u),10000);});return;
+  }
+  const s=takeover();s.overlays[k]=!s.overlays[k];render(s);
+ };
+ ui.btn.pause.onclick=toggle;
+ for(const [k,delta]of [['back',-15],['fwd',15]])ui.btn[k].onclick=()=>{
+  const s=takeover();s.camera.az+=delta;s.cam='free';s.stepLabel='Manual orbit';explicitPause=true;render(s);
+ };
+ for(let i=0;i<FEATURES.length;i++){
+  const [x,y]=ui.foSpot(i),b=document.createElement('div');b.className='hit';b.id='feature-'+i;
+  b.setAttribute('role','button');b.setAttribute('aria-label',FEATURES[i].name);b.tabIndex=0;
+  Object.assign(b.style,{left:x-15+'px',top:y-15+'px',width:'30px',height:'30px',borderRadius:'50%'});
+  b.onclick=()=>{const s=takeover();s.feature=i;s.cam='detail';s.stepLabel=FEATURES[i].name;s.overlays.focus=true;beginTransition(inspectCamera(i));render(s);};
+  b.onkeydown=activateWithKeyboard;ui.root.append(b);
+ }
+ const slider=(id,y,min,max,step,value,fn)=>{
+  const el=document.createElement('input');el.type='range';el.id=id;el.min=min;el.max=max;el.step=step;el.value=value;
+  el.setAttribute('aria-label',id);el.style.cssText=`position:absolute;left:38px;top:${y-11}px;width:254px;height:22px;opacity:0;pointer-events:auto;cursor:ew-resize;margin:0`;
+  el.oninput=()=>fn(Number(el.value));
+  el.onfocus=()=>{el.style.opacity='.65';};el.onblur=()=>{el.style.opacity='0';};
+  ui.root.append(el);return el;
+ };
+ function seekTo(v){
+  takeover();time=clamp(v,0,DURATION);manual=stateAt(time);manual.paused=true;explicitPause=true;render(manual);
+ }
+ const seek=slider('tour-position',836,0,DURATION,.01,0,seekTo);
+ const speed=slider('tour-speed',869,.25,2,.05,1,v=>{playbackSpeed=v;lastInput=performance.now();render(current,auto?cursor(time):idleCursor);});
+ ui.plot.style.pointerEvents='auto';ui.plot.style.cursor='ew-resize';ui.plot.style.touchAction='none';
+ const scrub=e=>{const r=ui.plot.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*232;seekTo((x-16)/208*DURATION);};
+ ui.plot.onpointerdown=e=>{scrubPointer=e.pointerId;ui.plot.setPointerCapture(e.pointerId);scrub(e);};
+ ui.plot.onpointermove=e=>{if(e.pointerId===scrubPointer)scrub(e);};
+ ui.plot.onpointerup=ui.plot.onpointercancel=e=>{if(ui.plot.hasPointerCapture(e.pointerId))ui.plot.releasePointerCapture(e.pointerId);scrubPointer=null;lastInput=performance.now();};
  canvas.onpointerdown=e=>{takeover();drag={x:e.clientX,y:e.clientY,az:manual.camera.az,el:manual.camera.el};canvas.setPointerCapture(e.pointerId);};
- canvas.onpointermove=e=>{if(!drag)return;manual.camera.az=drag.az+(e.clientX-drag.x)/scale*.3;manual.camera.el=clamp(drag.el+(e.clientY-drag.y)/scale*.2,-15,80);lastInput=performance.now();render(manual);};
+ canvas.onpointermove=e=>{
+  if(!drag)return;manual.camera.az=drag.az+(e.clientX-drag.x)/scale*.3;
+  manual.camera.el=clamp(drag.el+(e.clientY-drag.y)/scale*.2,-15,80);manual.cam='free';manual.stepLabel='Manual orbit';lastInput=performance.now();render(manual);
+ };
  canvas.onpointerup=canvas.onpointercancel=()=>{drag=null;lastInput=performance.now();};
  canvas.addEventListener('wheel',e=>{e.preventDefault();const s=takeover();s.camera.d=clamp(s.camera.d*Math.exp(e.deltaY*.0012),1,3);render(s);},{passive:false});
- addEventListener('keydown',e=>{if(e.target instanceof HTMLInputElement||e.altKey||e.ctrlKey||e.metaKey)return;const key=e.key.toLowerCase();if(key==='h'){hidden=!hidden;ui.root.style.visibility=hidden?'hidden':'';}else if(key===' '){ui.btn.pause.click();e.preventDefault();}else if('12345'.includes(key)&&key.length===1)ui.btn[CAMS[Number(key)-1]].click();else if(key==='arrowleft')ui.btn.back.click();else if(key==='arrowright')ui.btn.fwd.click();});
+ addEventListener('keydown',e=>{
+  if(e.defaultPrevented||e.target instanceof HTMLInputElement||e.altKey||e.ctrlKey||e.metaKey)return;
+  const key=e.key.toLowerCase();
+  if(key==='h'){hidden=!hidden;ui.root.style.visibility=hidden?'hidden':'';}
+  else if(key===' '){toggle();e.preventDefault();}
+  else if('12345'.includes(key)&&key.length===1)ui.btn[CAMS[Number(key)-1]].click();
+  else if(key==='arrowleft')ui.btn.back.click();else if(key==='arrowright')ui.btn.fwd.click();
+ });
  render(reduce?manual:current);await warmComposer(st.renderer,st.composer,st.scene,st.camera);loading.remove();
- const captureAt=t=>{auto=true;time=t;const s=stateAt(t);render(s,cursor(t));};
+ const captureAt=t=>{transition=null;auto=true;time=t;playbackSpeed=1;render(stateAt(t),cursor(t));};
  window.SIM={ready:true,duration:DURATION,fps:60,render:captureAt};
  window.DEMO={state:()=>structuredClone(current),tier:()=>tier,stats:()=>({calls:st.renderer.info.render.calls,triangles:st.renderer.info.render.triangles}),start,takeover,ui,stage:st};
  if(capture){captureAt(0);return;}
  const perf={n:0,sum:0,age:0};
- function frame(now){const dt=Math.min(.1,Math.max(0,(now-last)/1000));last=now;
+ function frame(now){
+  const dt=Math.min(.1,Math.max(0,(now-last)/1000));last=now;
   if(tier<2&&!params.has('quality')){perf.age+=dt;perf.n++;perf.sum+=dt;if(perf.age>1&&perf.n>=10&&perf.sum/perf.n>.026){tier++;quality();perf.age=perf.n=perf.sum=0;}}
-  if(!auto&&!explicitPause&&!reduce&&!drag&&now-lastInput>25000)start();
-  if(auto){time=(time+dt)%DURATION;render(stateAt(time),cursor(time));}
-  else if(!manual.paused&&!reduce&&!drag){manual.camera.az+=dt*4*manual.speed;manual.time=(manual.time+dt*manual.speed)%DURATION;render(manual);}
-  seek.value=current.time;speed.value=current.speed;requestAnimationFrame(frame);
+  if(!auto&&!explicitPause&&!reduce&&!drag&&scrubPointer===null&&now-lastInput>25000)start();
+  if(auto)time=(time+dt*playbackSpeed)%DURATION;
+  if(auto||transition){
+   const s=auto?stateAt(time):manual;
+   if(transition){
+    transition.elapsed+=dt;const k=smooth(transition.elapsed/transition.duration);
+    s.camera=blendCamera(transition.from,auto?s.camera:transition.to,k);
+    if(k>=1)transition=null;
+   }
+   render(s,auto?cursor(time):idleCursor);
+  }
+  seek.value=current.time;speed.value=playbackSpeed;requestAnimationFrame(frame);
  }
  requestAnimationFrame(frame);
  }catch(e){console.error(e);loading.textContent='WebGL could not start. Try a browser with hardware acceleration.';}

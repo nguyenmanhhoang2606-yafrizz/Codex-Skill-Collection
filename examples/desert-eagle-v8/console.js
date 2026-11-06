@@ -2,7 +2,7 @@
 // the transport bottom left, the charge legend top centre, the cylinder state, valve timing and indicator diagram on
 // the right, camera / cutaway / overlay toggles bottom right, the firing order bottom centre, and callouts with thin
 // leaders into the engine. Fixed 1600 x 900 CSS layout; update(s) redraws every live part from the frame's state.
-import {FEATURES, stateAt, DURATION} from './film.js';
+import {FEATURES, SCRIPT, DURATION} from './film.js';
 const ORDER = FEATURES.map((_,i)=>i+1);
 
 export const C = {ink: '#16181b', mute: '#8b8f95', faint: '#c9ccd0', line: '#e1e3e6', panel: 'rgba(248,248,249,.94)', red: '#d6182b', blue: '#3d8fe0', grey: '#5d6670', orange: '#f05a23', exh: '#8b8f95'};
@@ -108,14 +108,14 @@ export function createConsole(app) {
 
   // ------------------------------------------------------------ valve timing
   add(`<div class="pn" data-g="charts" style="left:1318px;top:252px;width:245px;height:184px"></div>`);
-  add(`<div class="cp" data-g="charts" style="position:absolute;left:1329px;top:263px;font-weight:700">CAMERA PATH</div>`);
+  add(`<div class="cp" data-g="charts" style="position:absolute;left:1329px;top:263px;font-weight:700">INSPECTION TOUR</div>`);
   add(`<div class="cp mu" data-g="charts" style="position:absolute;right:${1600 - 1552}px;top:263px;font-weight:500">DRAG TO SCRUB</div>`);
   const vtLeg = add(`<div class="cp" data-g="charts" style="position:absolute;left:1329px;top:280px;font-weight:500;font-size:9px"></div>`);
   const vt = add(`<svg data-g="charts" style="position:absolute;left:1326px;top:296px" width="232" height="135"></svg>`);
 
   // ------------------------------------------------------------ indicator diagram
   add(`<div class="pn" data-g="charts" style="left:1318px;top:443px;width:245px;height:150px"></div>`);
-  add(`<div class="cp" data-g="charts" style="position:absolute;left:1329px;top:455px;font-weight:700">VIEW TRAJECTORY</div>`);
+  add(`<div class="cp" data-g="charts" style="position:absolute;left:1329px;top:455px;font-weight:700">SURFACE NOTES</div>`);
   const idCyl = add(`<div class="cp mu" data-g="charts" style="position:absolute;right:${1600 - 1552}px;top:455px;font-weight:500"></div>`);
   const id = add(`<svg data-g="charts" style="position:absolute;left:1326px;top:470px" width="232" height="120"></svg>`);
 
@@ -196,17 +196,22 @@ export function createConsole(app) {
       strokeBig.textContent=feature.name;
       strokeList.innerHTML=feature.lines.map((n,i)=>`<div class="cp" style="height:16.5px;display:flex;align-items:center;gap:10px;font-weight:500;color:${i?C.mute:C.ink}"><i style="width:31px;height:2px;background:${i?C.line:C.red}"></i>${n}</div>`).join('');
       barBig.textContent=s.roughness.toFixed(2);barUnit.style.left='1425px';barFill.style.width=s.roughness*224+'px';
-      vtLeg.textContent='— AZIMUTH   /   — ELEVATION';
-      const X=t=>16+t/DURATION*208,Y=v=>108-v*85;
-      let curves='';
-      for(const [key,col] of [['az',C.red],['el',C.grey]]){
-        let path='';for(let t=0;t<=DURATION;t+=.15){const v=stateAt(t).camera[key];path+=(t?'L':'M')+X(t).toFixed(1)+' '+Y((v+90)/180).toFixed(1);}
-        curves+=`<path d="${path}" fill="none" stroke="${col}" stroke-width="1.2"/>`;
+      vtLeg.textContent=s.paused?'PAUSED · '+(s.stepLabel||feature.name).toUpperCase():(s.stepLabel||feature.name).toUpperCase();
+      const X=t=>16+t/DURATION*208;
+      const row={home:28,camera:28,surface:60,finish:92};
+      let chapters='';
+      for(let i=0;i<SCRIPT.length;i++){
+        const e=SCRIPT[i],end=SCRIPT[i+1]?.t??DURATION,active=s.time>=e.t&&s.time<end;
+        chapters+=`<rect x="${X(e.t)}" y="${row[e.action]}" width="${Math.max(2,X(end)-X(e.t)-2)}" height="10" fill="${active?C.red:C.faint}"/><text x="${X(e.t)+2}" y="${row[e.action]+8}" font-size="6.5" fill="${active?'#fff':C.ink}">${e.action==='surface'?e.feature+1:''}</text>`;
       }
-      vt.innerHTML=`<path d="M16 12V108H224" fill="none" stroke="${C.faint}"/>${curves}<path d="M${X(s.time)} 12V108" stroke="${C.ink}"/><text x="16" y="122" font-size="8" fill="${C.mute}">0</text><text x="198" y="122" font-size="8" fill="${C.mute}">${DURATION} S</text>`;
-      idCyl.textContent='AZ / EL';
-      let path='';for(let t=0;t<=DURATION;t+=.15){const c=stateAt(t).camera;path+=(t?'L':'M')+(116+c.az*.8).toFixed(1)+' '+(95-c.el).toFixed(1);}
-      id.innerHTML=`<path d="M16 15V98H224" fill="none" stroke="${C.faint}"/><path d="${path}" fill="none" stroke="${C.grey}" stroke-width="1.2"/><circle cx="${116+s.camera.az*.8}" cy="${95-s.camera.el}" r="3" fill="${C.red}"/><text x="18" y="112" font-size="8" fill="${C.mute}">TOUR PATH · LIVE CAMERA POINT</text>`;
+      vt.innerHTML=`<text x="16" y="22" font-size="8" fill="${C.mute}">CAMERA</text><text x="16" y="54" font-size="8" fill="${C.mute}">SURFACE INDEX</text><text x="16" y="86" font-size="8" fill="${C.mute}">FINISH</text>${chapters}<path d="M${X(s.time)} 12V108" stroke="${C.ink}"/><text x="16" y="122" font-size="8" fill="${C.mute}">0</text><text x="198" y="122" font-size="8" fill="${C.mute}">${DURATION} S</text>`;
+      idCyl.textContent=String(s.feature+1).padStart(2,'0')+' / 08';
+      let noteY=17,notes='';
+      for(const sentence of feature.notes){
+        let line='';for(const word of sentence.split(' ')){if((line+word).length>35){notes+=`<text x="3" y="${noteY}" font-size="10.5" fill="${C.grey}">${line}</text>`;noteY+=15;line='';}line+=word+' ';}
+        notes+=`<text x="3" y="${noteY}" font-size="10.5" fill="${C.grey}">${line}</text>`;noteY+=23;
+      }
+      id.innerHTML=notes;
       fo.innerHTML=ORDER.map((c,i)=>{const x=20+i*40,on=i===s.feature;return `<circle cx="${x}" cy="17" r="${on?15:11.5}" fill="${on?C.red:'#fff'}" stroke="${on?C.red:C.faint}"/><text x="${x}" y="20.5" text-anchor="middle" font-size="10" fill="${on?'#fff':C.ink}">${c}</text>`}).join('');
 
       // toggles

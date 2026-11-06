@@ -6,7 +6,7 @@
   "files": {
     "console.js": {
       "upstream_sha256": "f5f181172260af44862137f60466cd02ebee8d94011d36fa92fce04f4c4a7ef9",
-      "local_sha256": "820e351a5391c619d8ea9ef02974651a2110edd82c4ed7bdd48e42df9ac3f283"
+      "local_sha256": "d4a50b6b2219d792407d42027a1023b67d01856910ca8073a93cd989a5a34284"
     },
     "stage.js": {
       "upstream_sha256": "ef4308bade3a190dfa62482f6ac117737ff333d29450dba989e6a6b0f5ae92de",
@@ -14,11 +14,13 @@
     },
     "film.js": {
       "upstream_sha256": "54e1a893436c0a12558b142aac4bd9387bb50f3332f4e4248504b9a1f8134b00",
-      "local_sha256": "aa565260387373a8d8a0e85a81792a1f86d9cd9cf3f6d47b6bd0e1066faeca0c"
+      "local_sha256": "52a1be0d1fa9f7f5c0f68a9f16cf65983f36919b5d4fe03ea517f5a52a81a9e8"
     },
     "live.js": {
       "upstream_sha256": "5ebf6e53cf776831f2dddc46ccb7e33c81487cdb8cf80c1dfd335a1d37b0ba81",
-      "local_sha256": "b07a3ed5e3183f9ba42dd85d5793c3fae7a1982bc79a01c313b6445a019f540d"
+      "local_sha256": "aeba179b975b5807e8036ca9e09ad7bd4444a7a79f34f9b15c55d5c1be88891d"
     }
-  }
+  },
+  "adaptation": "Post-audit interaction, inspection and tour fixes",
+  "audit_baseline": "1e6a49b"
 }

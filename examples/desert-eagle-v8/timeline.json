@@ -3,31 +3,43 @@
   "beats": [
     {
       "t": 0,
-      "label": "Hero"
+      "label": "Overall form"
     },
     {
-      "t": 4,
-      "label": "Side contour"
+      "t": 3,
+      "label": "Side silhouette"
+    },
+    {
+      "t": 5,
+      "label": "Rear grooves"
     },
     {
       "t": 8,
-      "label": "Grip detail"
+      "label": "Grip texture"
     },
     {
-      "t": 12,
-      "label": "Top silhouette"
+      "t": 11,
+      "label": "Upper accents"
+    },
+    {
+      "t": 14,
+      "label": "Front perspective"
     },
     {
       "t": 16,
-      "label": "Graphite"
+      "label": "Graphite finish"
+    },
+    {
+      "t": 18,
+      "label": "Satin finish"
     },
     {
       "t": 20,
-      "label": "Silver"
+      "label": "Surface marking"
     },
     {
       "t": 24,
-      "label": "Return"
+      "label": "Return to overview"
     }
   ]
 }

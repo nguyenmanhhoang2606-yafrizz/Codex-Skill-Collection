@@ -56,3 +56,11 @@ excludes the Claude simulator as an implementation/design baseline.
 - Serial retry of full-quality tier 0 succeeded at 1280×720 with GTAO enabled;
   inspected and saved as `studio-full.png`. This validates the rendering branch,
   not real-time performance. The earlier concurrent timeout remains recorded.
+
+## Post-audit revision
+
+The results above describe the initial V8 rebuild. The subsequent audit found
+interaction defects not covered by those checks. See
+[the repair log](de-v8-fixes/CHANGELOG.md) for fixes, new pixel-level regressions
+and updated evidence. The current panels show inspection steps and surface notes
+in place of the two camera charts.

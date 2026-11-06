@@ -1,0 +1,35 @@
+{
+  "passed": false,
+  "results": [
+    {
+      "name": "Focus changes the rendered marking, not just state",
+      "passed": false,
+      "error": "marking canvas unchanged"
+    },
+    {
+      "name": "Space on focused Pause toggles exactly once",
+      "passed": false,
+      "error": "Expected values to be strictly equal:\n\ntrue !== false\n"
+    },
+    {
+      "name": "Chart scrubs continuously while dragging",
+      "passed": false,
+      "error": "time did not follow drag"
+    },
+    {
+      "name": "Selecting a surface reframes its actual region",
+      "passed": false,
+      "error": "Expected \"actual\" not to be strictly deep-equal to:\n\n{\n  az: 24,\n  d: 1.75,\n  el: 15,\n  sx: -20,\n  sy: 0,\n  tx: 0,\n  ty: -0.005,\n  tz: 0\n}\n"
+    },
+    {
+      "name": "Resume Tour retains chosen playback speed",
+      "passed": false,
+      "error": "Expected values to be strictly equal:\n\n1 !== 1.5\n"
+    },
+    {
+      "name": "Reduced-motion preference still allows explicit Play",
+      "passed": false,
+      "error": "page.waitForFunction: Timeout 5000ms exceeded."
+    }
+  ]
+}

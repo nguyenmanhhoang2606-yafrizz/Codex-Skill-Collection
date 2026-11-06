@@ -19,9 +19,10 @@ export function buildModel(){
  // Rounded rear shell, short bevelled forebody; all closed meshes.
  const rear=new T.Shape();rear.moveTo(-1.72,.57);rear.lineTo(-1.72,1.03);rear.quadraticCurveTo(-1.7,1.17,-1.52,1.19);rear.lineTo(-.33,1.19);rear.lineTo(-.21,1.06);rear.lineTo(.2,1.06);rear.lineTo(.26,.66);rear.lineTo(-.12,.56);rear.closePath();extrude(rear,.51,metal,1,.035);
  const cross=[[-.16,1.2],[.16,1.2],[.275,1.08],[.275,.78],[.18,.63],[-.18,.63],[-.275,.78],[-.275,1.08]];
- const positions=[],indices=[];for(const x of [-.18,2.28])for(const [z,y]of cross)positions.push(x,y,z);
- for(let i=0;i<8;i++){const j=(i+1)%8;indices.push(i,j,8+j,i,8+j,8+i);}for(let i=1;i<7;i++)indices.push(0,i+1,i,8,8+i,8+i+1);
- const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(positions,3));g.setIndex(indices);const flat=g.toNonIndexed();flat.computeVertexNormals();mesh(flat,metal,0);
+ // Bevel the exterior perimeter instead of joining razor-sharp flat faces.
+ const upperProfile=new T.Shape();cross.forEach(([z,y],i)=>i?upperProfile.lineTo(z,y):upperProfile.moveTo(z,y));upperProfile.closePath();
+ const upperGeometry=new T.ExtrudeGeometry(upperProfile,{depth:2.46,steps:1,bevelEnabled:true,bevelSize:.009,bevelThickness:.009,bevelSegments:3});
+ upperGeometry.rotateY(Math.PI/2);upperGeometry.translate(-.18,0,0);mesh(upperGeometry,metal,0);
  box(1.12,1.225,0,2.28,.025,.18,trim,0);
  outline([[-.2,.65],[1.59,.65],[1.59,.55],[-.2,.55]],.43,metal,5,.012);
  // Sculpted external frame with a curved transition into the grip.
@@ -56,16 +57,20 @@ export function buildModel(){
  box(-.73,.39,sign*.245,.37,.045,.025,graphite,5);
  const dot=mesh(new T.SphereGeometry(.013,12,8),new T.MeshStandardMaterial({color:'#98282c',roughness:.65}),5);dot.position.set(-1.35,1.01,sign*.31);
  }
- const front=mesh(new T.CylinderGeometry(.103,.103,.004,48),black,0);front.rotation.z=Math.PI/2;front.position.set(2.283,.93,0);
- const ring=mesh(new T.TorusGeometry(.108,.008,8,48),trim,0);ring.rotation.y=Math.PI/2;ring.position.set(2.285,.93,0);
+ const front=mesh(new T.CylinderGeometry(.103,.103,.004,48),black,0);front.rotation.z=Math.PI/2;front.position.set(2.293,.93,0);
+ const ring=mesh(new T.TorusGeometry(.108,.008,8,48),trim,0);ring.rotation.y=Math.PI/2;ring.position.set(2.295,.93,0);
  box(-1.53,-1.62,0,1.02,.065,.52,black,7);
  const writing=texture(1024,128,(c)=>{c.fillStyle='#353b42';c.textAlign='center';c.font='500 44px sans-serif';c.fillText('DESERT EAGLE',512,50);c.font='18px sans-serif';c.fillText('REFERENCE STUDY  ·  SATIN FINISH',512,88);});
- const decal=new T.Mesh(new T.PlaneGeometry(1.28,.16),new T.MeshBasicMaterial({map:writing,transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-1}));decal.position.set(1.12,.91,.277);groups[6].add(decal);
+ const decal=new T.Mesh(new T.PlaneGeometry(1.48,.18),new T.MeshBasicMaterial({map:writing,transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-1}));decal.position.set(1.12,.91,.286);groups[6].add(decal);
+ // The marking uses an unlit transparent material, so focus is a separate visible outline.
+ const markingFocus=new T.LineSegments(new T.EdgesGeometry(new T.PlaneGeometry(1.54,.22)),new T.LineBasicMaterial({color:'#d6182b',depthTest:false}));
+ markingFocus.position.copy(decal.position);markingFocus.position.z+=.003;markingFocus.renderOrder=8;groups[6].add(markingFocus);
  const edges=new T.Group();for(const {o}of meshes){const e=new T.LineSegments(new T.EdgesGeometry(o.geometry,32),new T.LineBasicMaterial({color:'#59616a',transparent:true,opacity:.24}));e.position.copy(o.position);e.rotation.copy(o.rotation);e.scale.copy(o.scale);edges.add(e);}root.add(edges);
  function update(s){
   for(const m of meshes){m.o.material.color.copy(m.base);if(m.metal){m.o.material.roughness=s.roughness;if(s.cut==='graphite')m.o.material.color.multiplyScalar(.34);if(s.cut==='clay'){m.o.material.color.set('#b4b3ae');m.o.material.metalness=0;}else m.o.material.metalness=.85;}
    m.o.material.emissive.set(s.overlays.focus&&m.group===s.feature?'#3d0609':'#000');
   }
+  markingFocus.visible=!!s.overlays.focus&&s.feature===6;
   edges.visible=!!s.overlays.edges;
  }
  return {root,update,groups,setCut(){},setRefract(){}};
