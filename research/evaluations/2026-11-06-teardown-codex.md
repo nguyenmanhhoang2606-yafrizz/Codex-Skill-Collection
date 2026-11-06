@@ -56,3 +56,17 @@ Kết quả lần chạy cuối: PASS các tương tác nêu trên; `errors=[]`,
 `externalRequests=[]`, `overflow=false`, `SIM.ready=true`. JSON bằng chứng ở
 `research/evaluations/2026-11-06-teardown-browser-result.json`;
 ảnh desktop ở `examples/desert-eagle-viewer/preview.png`.
+
+## Bản trình diễn mở rộng
+
+Đã bổ sung bề mặt kim loại có vân, chữ trang trí, ba điểm chú thích, toàn màn
+hình, xuất PNG, đặt lại và hai mức chất lượng. Bản HTML khoảng 800 KB, vẫn offline.
+
+Playwright xác nhận: chú thích đúng nội dung; xuất file PNG hợp lệ; vào/thoát toàn
+màn hình; chuyển đồ họa nhẹ; reset màu/góc nhìn/chất lượng; tôn trọng reduced
+motion. Các kiểm tra camera, zoom, đổi màu, mobile và không gọi mạng tiếp tục đạt.
+Đã xem trực tiếp ảnh desktop, mobile, chú thích và frame video cuối.
+Góc mẫu mới: 94 draw calls, 10.378 tam giác; đây là thống kê render, không phải
+benchmark FPS. Video preview 8 giây là ghi màn hình Chromium qua SwiftShader,
+không phải phim 60 fps xuất bằng pipeline capture của skill. Ngoại hình vẫn là
+bản cách điệu; giới hạn độ chính xác ảnh tham khảo nêu trên tiếp tục áp dụng.
