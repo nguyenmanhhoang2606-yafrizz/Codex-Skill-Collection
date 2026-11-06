@@ -43,3 +43,11 @@ reference-image fidelity and real-device performance have not been certified.
 
 `preview.mp4` is an eight-second browser recording for a quick look. It has no
 audio and is not a 60 fps cinematic export. Use `demo.html` for full interaction.
+
+## Reference edition 02
+
+The current exterior has been redrawn using the user's Desert Eagle side-view
+image as the primary visual reference, with the supplied concept sheet as a
+secondary material reference. Earlier GSG-1911/other-pistol images were excluded.
+`reference-side.png` shows the revised silhouette. Unseen surfaces remain artistic
+approximations; the model is not a scan or a certified 1:1 reproduction.

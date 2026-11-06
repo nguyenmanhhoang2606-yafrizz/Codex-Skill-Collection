@@ -70,3 +70,21 @@ Góc mẫu mới: 94 draw calls, 10.378 tam giác; đây là thống kê render,
 benchmark FPS. Video preview 8 giây là ghi màn hình Chromium qua SwiftShader,
 không phải phim 60 fps xuất bằng pipeline capture của skill. Ngoại hình vẫn là
 bản cách điệu; giới hạn độ chính xác ảnh tham khảo nêu trên tiếp tục áp dụng.
+
+## Reference edition 02 — sau khi nhận ảnh người dùng
+
+Đã nhận ảnh nhìn ngang Desert Eagle và ảnh concept do người dùng cung cấp trong
+chat. Bỏ qua các ảnh GSG-1911/mẫu khác gửi nhầm. Dùng phần ngoại hình ảnh nhìn
+ngang làm tham chiếu chính, ảnh concept chỉ bổ sung cảm nhận vật liệu; không dùng
+sơ đồ bên trong hoặc các số liệu trên infographic làm nguồn kỹ thuật.
+
+Đã dựng lại silhouette, tay cầm nghiêng, phần thân trên dài với các mặt vát,
+họa tiết mặt ngoài, chữ và các điểm nhấn bề mặt. Đã trực tiếp xem ảnh phối cảnh,
+nhìn ngang, graphite và mobile để kiểm tra. Artifact mang nhãn Reference Edition 02.
+Các phần không thấy trong ảnh vẫn là giả định mỹ thuật; chưa xác nhận chính xác
+1:1 hay tương đương một model scan/asset thương mại.
+
+Browser smoke test đầy đủ tiếp tục PASS: camera, zoom, vật liệu, chú thích, PNG,
+fullscreen, quality/reset, reduced motion; không lỗi JS, không HTTP request,
+không tràn ngang mobile. Render góc mẫu: 104 draw calls và 36.674 tam giác.
+Ảnh nhìn ngang để đối chiếu: examples/desert-eagle-viewer/reference-side.png.
