@@ -2,6 +2,27 @@
 
 Research and versioned source backups of skills evaluated for Codex.
 
+## Pixelfx
+
+Đã lưu nguyên kho nguồn tại [`skills/pixelfx`](skills/pixelfx), gồm thư viện hiệu
+ứng, công cụ render/export, gallery và tài liệu. Hướng dẫn skill gốc nằm tại
+[`skills/pixelfx/skills/pixelfx/SKILL.md`](skills/pixelfx/skills/pixelfx/SKILL.md).
+Phiên bản nguồn và SHA-256 của từng file được ghi trong
+[`research/pixelfx-source.json`](research/pixelfx-source.json); manifest này cũng
+đưa toàn bộ kho pixelfx vào hệ thống theo dõi cập nhật hiện có.
+
+Đây là bản lưu trong project, chưa cài vào thư mục skill cá nhân hoặc đăng ký
+plugin trên tài khoản. Giữ nguyên cấu trúc upstream: các đường dẫn `tools/`,
+`src/`, `docs/` trong skill được tính từ `skills/pixelfx`, không phải thư mục
+chứa `SKILL.md`. Skill gốc hướng dẫn cài cho Claude Code; khả năng Codex tự nhận
+diện chưa được kiểm chứng.
+
+Thư viện yêu cầu Node.js 18+; FFmpeg tùy chọn cho preview GIF/MP4. Mã và hiệu ứng
+dùng MIT, giữ nguyên LICENSE và NOTICE.md. Font Patch Pixel trong `gallery/fonts`
+có bản quyền riêng, không thuộc MIT; xem NOTICE.md trong thư mục đó trước khi
+tái sử dụng font. Lượt lưu này chỉ kiểm tra tính toàn vẹn bản sao, chưa đánh giá
+chất lượng hiệu ứng hoặc chạy công cụ upstream.
+
 ## Teardown
 
 The complete source backup is in `skills/teardown`, from commit
