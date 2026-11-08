@@ -1,0 +1,40 @@
+{
+  "source": "https://github.com/vercel-labs/agent-desktop",
+  "commit": "b43ac4f6e892ef608f8851428613c4009f0e84c7",
+  "tracking_ref": "main",
+  "upstream_path": "skills",
+  "license": "Apache-2.0; LICENSE copied unchanged into each preserved skill directory",
+  "scope": [
+    "agent-desktop",
+    "agent-desktop-windows",
+    "agent-desktop-macos",
+    "agent-desktop-linux"
+  ],
+  "checksum_root": "skills",
+  "sha256": {
+    "agent-desktop/LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "agent-desktop/SKILL.md": "941873a93fca670fc16362de192521f2b5ca27675fb55f18c2112cde86ca9089",
+    "agent-desktop/references/commands-interaction.md": "5ef8a87be8aed9b0102adb3c332dcd50586c7fb28dc0f1490207ab9321673bf5",
+    "agent-desktop/references/commands-observation.md": "9c31aec6f51dacfc14ff68dc04533a8dcf3ed5edb3f935d90e453f471894b936",
+    "agent-desktop/references/commands-system.md": "20b7537f6031b9d61378909a8a9f117a7e901bf58c277ff87a5e07f5e6539d3a",
+    "agent-desktop/references/workflows.md": "9c5a93361f992d73eff50e9ec99bb895424ababd57d3f6742ff71e73734c1af1",
+    "agent-desktop-windows/LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "agent-desktop-windows/SKILL.md": "6d1ce79a23caf84a5ef75695a4896a1b8bdde7d2b4ff55a655c20118b38e189c",
+    "agent-desktop-windows/references/chromium-and-electron.md": "db7a62782aa5717f0c70269faf26c1193a4fdfa2eee6c46f915bb3b86f1e3ea4",
+    "agent-desktop-windows/references/permissions-and-elevation.md": "1ae422d682a4ed48025b5f17c2ce8a37e830b8d86b0a18f3f4d725fc74ada733",
+    "agent-desktop-windows/references/shell-and-overlay.md": "5ed688610f3ed9e9c20a878b20507a11f59bd695df56be0b17534ff9b539c778",
+    "agent-desktop-windows/references/troubleshooting.md": "8f6115c920495f84f7ef866750d50e789c3a9efac84ed7b4c337f1e116ecc923",
+    "agent-desktop-macos/LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "agent-desktop-macos/SKILL.md": "312e7942abb613e753ebadcb98aa1c2b82b491d95075dcad0fc8e5a14fad9e95",
+    "agent-desktop-macos/references/troubleshooting.md": "600456fbccbf0fdcc0a1facbab95f92c3ab28f990e41964036aa3efd4d541495",
+    "agent-desktop-linux/LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "agent-desktop-linux/SKILL.md": "ecb440ca4a5dc7ef41f14588739e9d3bac949acdbbc9ade7a6bb976de9f77d6b",
+    "agent-desktop-linux/references/bus-and-permissions.md": "a669f09961b1da95e23dfda93f2c9615cd1018d4303c175935e0e2418005a781",
+    "agent-desktop-linux/references/capture-and-clipboard.md": "1ef96c106b44697c0d7ba02fb78224f3784c41c5c5f45ee9276e22e35eb9415c",
+    "agent-desktop-linux/references/display-servers-and-input.md": "cdd42c1932d4e2778c581ce5ff9bbbc9fb013087dbe83be5e64abad9bfb26b58",
+    "agent-desktop-linux/references/shell-tray-and-notifications.md": "0b91b2214a0eb9a54fed338c741bea375fe14d668b0447c0f9f2b3aff5f9cd60",
+    "agent-desktop-linux/references/troubleshooting.md": "809230d582fec5aaefda5b9946bb45a2fd8e7710ac290f00aa73b795ece0417a",
+    "agent-desktop-linux/references/windows-and-lifecycle.md": "e4c4f2cf5c119cb15c1ad281604c46b5106e069639c50966ced760ed5384b7c8"
+  },
+  "notes": "Preserved desktop CLI skill and all three platform skill directories. FFI and jev-desktop skills are outside this backup. CLI binaries are not included or installed."
+}

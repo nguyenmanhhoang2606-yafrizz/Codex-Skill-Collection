@@ -120,3 +120,29 @@ lấy trực tiếp `v8-live/v8-shared` làm chuẩn, giữ nguyên vị trí b�
 hệ thống thiết kế của tác giả. [Demo offline](examples/desert-eagle-v8/demo.html) ·
 [Ảnh đối chiếu V8/bản mới/bản cũ](examples/desert-eagle-v8/comparison.png).
 Không dùng demo Claude làm nguồn triển khai.
+
+## Agent Desktop
+
+Bộ skill thao tác desktop được lưu nguyên bản từ
+https://github.com/vercel-labs/agent-desktop, commit
+`b43ac4f6e892ef608f8851428613c4009f0e84c7`. Bao gồm skill chính `skills/agent-desktop` cùng
+`agent-desktop-windows`, `agent-desktop-macos`, `agent-desktop-linux` và toàn bộ
+references của bốn thư mục đó. Giấy phép Apache-2.0 được giữ trong từng thư mục;
+nguồn và SHA-256 nằm ở `research/agent-desktop-source.json` (đường dẫn checksum
+tính từ `skills/`). Không bao gồm skill FFI, jev-desktop hay binary CLI.
+
+Để dùng trên máy cá nhân, kéo các thư mục trên về và chép `agent-desktop` cùng
+skill tương ứng hệ điều hành vào thư mục skill người dùng của agent
+(với Codex: `~/.agents/skills/`; Windows: `%USERPROFILE%\.agents\skills\`).
+Cài CLI riêng trên chính máy có desktop cần điều khiển:
+
+```sh
+npm install -g agent-desktop
+agent-desktop status
+agent-desktop skills get desktop
+agent-desktop skills get platform
+```
+
+Trên macOS, dùng `agent-desktop permissions --guide` để xem hướng dẫn cấp quyền.
+Ưu tiên hướng dẫn nhúng trong CLI nếu phiên bản CLI khác bản skill lưu trữ.
+Bản này chỉ được bảo tồn và kiểm tra tính toàn vẹn; chưa thử điều khiển desktop.
