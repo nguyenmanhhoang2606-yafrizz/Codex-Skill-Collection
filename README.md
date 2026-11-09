@@ -167,3 +167,23 @@ agent-desktop skills get platform
 Trên macOS, dùng `agent-desktop permissions --guide` để xem hướng dẫn cấp quyền.
 Ưu tiên hướng dẫn nhúng trong CLI nếu phiên bản CLI khác bản skill lưu trữ.
 Bản này chỉ được bảo tồn và kiểm tra tính toàn vẹn; chưa thử điều khiển desktop.
+
+## PPT Master
+
+Lưu nguyên gói skill tự chứa tại `skills/ppt-master`, từ
+https://github.com/hugohe3/ppt-master, commit `ce92fb43e4ade9c701f4c869e286f13fce743c72`
+(phiên bản khai báo trong SKILL.md: 6.9.0). Bao gồm workflow, references, scripts,
+tests, templates, icon, âm thanh, `.env.example`, requirements và các giấy phép/
+THIRD_PARTY_NOTICES; không bao gồm repo-level docs, ảnh quảng bá hay projects.
+Nguồn và SHA-256 của từng file: `research/ppt-master-source.json`
+(đường dẫn checksum tính từ `skills/ppt-master`).
+
+Session trên máy cá nhân kéo repo, chép nguyên thư mục `skills/ppt-master` vào
+`~/.agents/skills/ppt-master` (Windows: `%USERPROFILE%\.agents\skills\ppt-master`),
+rồi cài dependencies từ `requirements.txt` trong thư mục đã chép bằng Python
+3.10–3.14, ví dụ `python -m pip install -r <duong-dan-skill>/requirements.txt`.
+Đọc SKILL.md từ đường dẫn tuyệt đối của bản cài và theo hướng dẫn nhúng.
+API key cho chức năng tùy chọn được cấu hình riêng trên máy, không lưu vào repo.
+
+Đây là bản bảo tồn được kiểm tra file/checksum; chưa cài dependency hoặc thử tạo
+slide. Các dependency ngoài không được đóng gói, nên cài đặt vẫn cần mạng.
