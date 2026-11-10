@@ -187,3 +187,47 @@ API key cho chức năng tùy chọn được cấu hình riêng trên máy, kh�
 
 Đây là bản bảo tồn được kiểm tra file/checksum; chưa cài dependency hoặc thử tạo
 slide. Các dependency ngoài không được đóng gói, nên cài đặt vẫn cần mạng.
+
+## Figma MCP Bridge
+
+Lưu đầy đủ source MCP server và plugin Figma tại `tools/figma-mcp-bridge`, từ
+https://github.com/gethopp/figma-mcp-bridge, commit `0a55fa405545edb00b8cd856f842257facad685e`
+(phiên bản server/plugin 0.0.26). Đây là công cụ MCP, không phải Agent Skill:
+không chép vào `~/.agents/skills`. Giữ nguyên README, LICENSE.md (MIT), lockfile,
+mã nguồn và cấu hình build. Nguồn và SHA-256 từng file nằm ở
+`research/figma-mcp-bridge-source.json` (checksum tính từ thư mục công cụ).
+
+### Khôi phục trên máy cá nhân
+
+Cần Figma Desktop Windows/macOS, Node.js 20+ và Bun để build bản đã lưu.
+Sau khi kéo kho, chạy từ `tools/figma-mcp-bridge`:
+
+```sh
+cd server
+bun install --frozen-lockfile
+bun run build
+cd ../plugin
+bun install --frozen-lockfile
+bun run build
+```
+
+Trong Figma Desktop, chọn **Plugins → Development → Import plugin from manifest**,
+trỏ tới `plugin/manifest.json` của bản đã build. Mở plugin trong từng file muốn
+agent truy cập. Không cần chạy workflow release được lưu trong `.github/`.
+
+Thêm cấu hình vào file cấu hình Codex local (đổi đường dẫn mẫu thành đường dẫn
+tuyệt đối trên máy; trên Windows có thể dùng dấu `/`):
+
+```toml
+[mcp_servers.figma_bridge]
+command = "node"
+args = ["/absolute/path/Codex-Skill-Collection/tools/figma-mcp-bridge/server/dist/index.js"]
+```
+
+Khởi động lại Codex sau khi cấu hình. Đọc README nguồn để biết cách dùng tool,
+giới hạn và cách bật `run_script` nếu cần; mặc định giữ script tắt và server
+ở localhost. Giao tiếp này đi qua plugin local, không dùng đường REST API đọc
+tài liệu, nhưng không thay đổi quota của plugin Figma khác trong chat.
+
+Bản lưu chưa gồm `node_modules` hoặc binary build: cài dependency vẫn cần mạng.
+Đã kiểm tra bản sao và checksum; chưa build hoặc thử kết nối với Figma Desktop.

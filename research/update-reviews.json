@@ -4,5 +4,17 @@
     "head": "044e12a45dc9cc312cec50ee606dfc98afe5adc2",
     "decision": "defer",
     "report": "research/reviews/pixelfx-044e12a45dc9.md"
+  },
+  "agent-desktop": {
+    "base": "b43ac4f6e892ef608f8851428613c4009f0e84c7",
+    "head": "ab7dfb218cddc1594aa1d87a5bfcd0ac76da2276",
+    "decision": "defer",
+    "report": "research/reviews/agent-desktop-ab7dfb218cdd.md"
+  },
+  "ppt-master": {
+    "base": "ce92fb43e4ade9c701f4c869e286f13fce743c72",
+    "head": "3c6ffd0ee6d6e31aa9ca316bd157173802e3526f",
+    "decision": "defer",
+    "report": "research/reviews/ppt-master-3c6ffd0ee6d6.md"
   }
 }
