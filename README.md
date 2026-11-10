@@ -276,3 +276,48 @@ Taste phù hợp hơn khi xây website giới thiệu cho tool hoặc trang mark
 ảnh/motion; quy tắc một section mỗi màn hình và các moment không nên ép lên
 giao diện làm việc dày đặc. Kết luận này dựa trên hướng dẫn, chưa phải benchmark
 cùng một tool qua hai skill.
+
+## Agent Sprite Forge
+
+Lưu toàn bộ repository nguồn tại `skills/agent-sprite-forge`, từ
+https://github.com/0x0funky/agent-sprite-forge, commit `6b3da5c444363378e20f3fce130ebecc22f343dd`.
+Plugin manifest ghi **0.5.0**; một số tài liệu vẫn ghi 0.4. Bao gồm đủ năm
+skill, shared modules/schema, tools cài đặt, tests/fixtures, tài liệu giới hạn,
+demo/media, requirements, LICENSE và THIRD_PARTY_NOTICES. Không chứa lịch sử
+`.git`, dependency đã cài hoặc credentials. SHA-256 của từng file và commit
+nguồn nằm ở `research/agent-sprite-forge-source.json`; checksum tính từ thư mục
+backup. Mã/tài liệu MIT; ảnh/video tạo bằng model chịu điều khoản provider.
+
+### Khôi phục trên máy cá nhân
+
+Sau khi kéo repo, chạy từ `skills/agent-sprite-forge` với Python 3.10+:
+
+```sh
+python -m pip install -r requirements.txt
+python tools/install_skills.py --apply --host agents
+python tools/install_skills.py --check --host agents
+```
+
+`--host agents` cài vào `~/.agents/skills` (Windows: `%USERPROFILE%\.agents\skills`),
+phù hợp dùng với Codex; `--host codex` của installer nguồn dùng
+`$CODEX_HOME/skills`, mặc định `~/.codex/skills`. Installer backup bản cũ trước
+khi thay và ghi manifest riêng. Source commit mà installer tự đọc trong bản
+vendored có thể là commit của kho collection; SHA upstream chính xác là manifest
+`research/agent-sprite-forge-source.json`. Giữ năm thư mục skill cạnh nhau vì
+chúng gọi script của nhau qua đường dẫn tương đối. Khởi động session mới sau cài.
+
+Video cần ffmpeg 5.1+ có libvpx-vp9 và libx264; code-art SVG có dependency tùy
+chọn trong `requirements-codeart.txt`. Công cụ kiểm tra khả năng và hướng dẫn
+route nằm trong `generate2dmedia`. Tạo ảnh không đồng nghĩa có khả năng tạo
+video: animation cần route video hoặc clip người dùng cung cấp.
+
+Bản pixelfx đã lưu trong collection có thể được chỉ định qua `PIXELFX_DIR`
+(trỏ tới thư mục tuyệt đối `skills/pixelfx`) hoặc `--pixelfx`, khi dùng FX route A.
+Đọc hướng dẫn từng skill để kiểm tra khả năng tương thích; chưa chạy tích hợp
+Sprite Forge/pixelfx. Giữ CREDITS.txt đi cùng các frame xuất từ pixelfx.
+
+**Trước khi tạo media:** chọn rõ route, chạy dry-run và đặt giới hạn chi phí/số
+lần gọi; upstream ưu tiên API key đã cấu hình và không có trần chi phí mặc định.
+Không lưu API key vào collection. Bản backup chỉ được kiểm tra file/checksum,
+chưa chạy installer, test hay tạo asset. Exporter engine cần thử import trong
+editor mục tiêu; đọc `docs/known-limitations.md` trước khi dùng cho sản phẩm.
