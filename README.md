@@ -231,3 +231,48 @@ tài liệu, nhưng không thay đổi quota của plugin Figma khác trong chat
 
 Bản lưu chưa gồm `node_modules` hoặc binary build: cài dependency vẫn cần mạng.
 Đã kiểm tra bản sao và checksum; chưa build hoặc thử kết nối với Figma Desktop.
+
+## Hallmark và Taste Skill
+
+Lưu nguyên các gói skill và toàn bộ scripts, references, assets/library đi kèm:
+
+| Gói | Bản lưu | Nguồn và checksum |
+| --- | --- | --- |
+| `skills/hallmark` | Hallmark 2.0.0 | `research/hallmark-source.json` |
+| `skills/taste-skill` | Taste Skill 2.5.1, tên skill `design-taste-frontend` | `research/taste-skill-source.json` |
+
+SHA nguồn đầy đủ nằm trong manifest; đường dẫn SHA-256 tính từ thư mục gói.
+`UPSTREAM_README.md` là README repo nguồn được chép nguyên bản; LICENSE của
+Taste được chép từ gốc repo vì không có sẵn trong gói. Các file gói không bị
+sửa; ghi công/giấy phép ảnh và tài nguyên bên thứ ba được giữ nguyên. Chưa chạy
+installer, dependency, checker hay demo của hai skill; chỉ kiểm tra bản sao.
+
+Session trên máy cá nhân kéo repo rồi chép nguyên từng thư mục vào
+`~/.agents/skills/` (Windows: `%USERPROFILE%\.agents\skills\`). Với Taste,
+có thể đặt thư mục đích là `design-taste-frontend` để trùng tên skill và các
+đường dẫn dự phòng của hook. Khởi động session Codex mới để kiểm tra discovery;
+nếu chưa nhận, yêu cầu agent đọc SKILL.md từ đường dẫn tuyệt đối.
+
+Hallmark cần Node 18+; render cần Chrome/Chromium và `puppeteer-core` cài riêng.
+Taste cần Node 22+ và Chrome/Edge/Chromium, ffmpeg tùy chọn. Phải dùng toàn gói,
+không chỉ chép SKILL.md; tài nguyên ngoài như font/ảnh/icon có thể cần mạng.
+Không mặc định bật chung hai workflow vì quy tắc bố cục/motion khác nhau.
+
+### Chọn skill khi cải thiện UI của tool HTML
+
+Ưu tiên **Hallmark ở app scope**, không dùng flow landing page.
+`references/flow.md` mục **App screens** dành riêng dashboard, admin, settings
+và tool: bỏ hero, nhịp section, word budget và ảnh stand-in; giữ shell hiện có,
+ưu tiên bảng, form, mật độ control, focus, contrast và trạng thái loading/empty/
+error/full. Audit trước để xác định vấn đề; polish để chỉnh nhẹ, chỉ redesign
+khi cần thay cấu trúc. Đọc `references/redesign.md` trước khi áp dụng.
+
+Prompt gợi ý: “Dùng Hallmark audit UI của tool HTML tại <đường-dẫn>, xem đây là
+app screen. Sau đó polish màu, typography, spacing, control states và responsive;
+giữ nguyên xử lý dữ liệu, sự kiện, ID/selector đang dùng và luồng thao tác.
+Không thêm hero, section toàn màn hình hoặc animation trang trí.”
+
+Taste phù hợp hơn khi xây website giới thiệu cho tool hoặc trang marketing có
+ảnh/motion; quy tắc một section mỗi màn hình và các moment không nên ép lên
+giao diện làm việc dày đặc. Kết luận này dựa trên hướng dẫn, chưa phải benchmark
+cùng một tool qua hai skill.
