@@ -321,3 +321,45 @@ lần gọi; upstream ưu tiên API key đã cấu hình và không có trần c
 Không lưu API key vào collection. Bản backup chỉ được kiểm tra file/checksum,
 chưa chạy installer, test hay tạo asset. Exporter engine cần thử import trong
 editor mục tiêu; đọc `docs/known-limitations.md` trước khi dùng cho sản phẩm.
+
+## Context Mode
+
+Lưu toàn bộ repo nguồn tại `tools/context-mode`, commit `f681b4580fe8340364384b04d9936a645cb05c53`
+của https://github.com/mksglu/context-mode, phiên bản khai báo **2.1.7**. Gồm
+source, build scripts, plugin manifests cho Codex/các agent, hooks, companion
+skills, docs, bench/evidence, tests và bundle upstream có theo dõi trong Git.
+SHA-256 từng file: `research/context-mode-source.json` (tính từ thư mục backup).
+Giữ nguyên **Elastic License 2.0**, không gộp thành MIT: dùng và chia sẻ theo
+điều kiện giấy phép; hạn chế cung cấp chức năng đáng kể thành dịch vụ hosted/managed
+và phải giữ notices. Gateway hosted là sản phẩm riêng, không được thiết lập ở đây.
+
+### Khôi phục bản đã lưu cho Codex local
+
+Không chỉ chép thư mục `skills`: cần MCP server, hooks và runtime. Node
+**>=24.15.0**; Windows cần Git for Windows/Git Bash. Từ `tools/context-mode`:
+
+```sh
+npm install --no-package-lock
+node build/build.mjs --out release-out --sha f681b4580fe8340364384b04d9936a645cb05c53 --version 2.1.7
+npm i -g ./release-out
+context-mode --version
+context-mode setup --agents codex
+```
+
+Đây là hướng dẫn build từ source đã lưu, không phải lệnh tải bản mới nhất
+từ npm. Upstream không có lockfile dependency ở gốc nên bản backup chưa bảo đảm
+build bit-for-bit; cài dependency vẫn cần mạng. `npm i -g .` ở gốc source
+không tạo CLI vì gốc repo là dev package; phải cài cây `release-out`.
+
+Setup sẽ đề xuất và backup cấu hình trước khi thêm MCP/hooks/trust vào
+`~/.codex` hoặc `$CODEX_HOME`; đọc kế hoạch trên máy trước khi áp dụng.
+Khởi động lại Codex, chạy `context-mode doctor --agents codex`,
+`codex mcp list` và `$ctx-doctor` trong session để kiểm tra cả MCP lẫn hooks.
+Chi tiết: `tools/context-mode/docs/install/codex.md`. Không dùng bundle
+`plugins/claude-code` như một cấu hình Codex đã được xác nhận.
+
+Plugin lưu index/journal local trong `~/.context-mode`; phần được agent đọc
+vẫn có thể đi vào request gửi model. “Sandbox” của công cụ không phải ranh giới
+cách ly hệ điều hành: code chạy bằng quyền user. Giảm byte output không đồng
+nghĩa giảm cùng tỷ lệ tổng token/chi phí. Chưa build, cài, chạy benchmark hay
+thay cấu hình Codex trong tác vụ bảo tồn này; chỉ kiểm tra file và checksum.
