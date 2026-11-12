@@ -363,3 +363,15 @@ vẫn có thể đi vào request gửi model. “Sandbox” của công cụ kh�
 cách ly hệ điều hành: code chạy bằng quyền user. Giảm byte output không đồng
 nghĩa giảm cùng tỷ lệ tổng token/chi phí. Chưa build, cài, chạy benchmark hay
 thay cấu hình Codex trong tác vụ bảo tồn này; chỉ kiểm tra file và checksum.
+
+## Bộ Composio và 20 mục từ bài post
+
+Đã lưu repo `ComposioHQ/awesome-claude-skills` cùng các nguồn còn thiếu trong
+danh sách 20 mục; Hallmark và pixelfx giữ nguyên bản đang có. Tổng cộng 19
+snapshot mới, đầy đủ tracked source và tài nguyên đi kèm. Bảng đường dẫn,
+commit, điều kiện giấy phép, runtime và hướng dẫn cho session local nằm tại
+[danh mục nguồn](docs/imported-skill-catalog.md).
+
+Mỗi nguồn có manifest/checksum riêng ở `research/*-source.json`, được theo dõi
+bởi cơ chế cập nhật hiện có. Chưa cài hoặc bật các công cụ. Không nên cài cả bộ
+vào một session; chọn theo công việc và kiểm tra dependency/giấy phép trước.

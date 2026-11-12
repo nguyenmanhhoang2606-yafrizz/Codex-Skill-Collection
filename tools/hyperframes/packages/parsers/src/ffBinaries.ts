@@ -1,0 +1,245 @@
+import {
+  accessSync,
+  closeSync,
+  constants,
+  existsSync,
+  openSync,
+  readSync,
+  statSync,
+} from "node:fs";
+import { createRequire } from "node:module";
+import { basename, dirname, join, resolve } from "node:path";
+import { isTrustedExecutablePath, trustedPathDirs } from "./trustedExecutable.js";
+
+/**
+ * Shared FFmpeg/FFprobe binary resolution for every package that shells out
+ * to them (engine, cli, lint, studio-server). Node-only: import via the
+ * `@hyperframes/parsers/ff-binaries` subpath, never from a browser bundle.
+ */
+
+export {
+  findTrustedExecutable,
+  isTrustedDirectory,
+  isTrustedExecutablePath,
+  trustedPathDirs,
+} from "./trustedExecutable.js";
+
+export const FFMPEG_PATH_ENV = "HYPERFRAMES_FFMPEG_PATH";
+export const FFPROBE_PATH_ENV = "HYPERFRAMES_FFPROBE_PATH";
+
+export type FfBinaryName = "ffmpeg" | "ffprobe";
+
+const ENV_BY_NAME: Record<FfBinaryName, string> = {
+  ffmpeg: FFMPEG_PATH_ENV,
+  ffprobe: FFPROBE_PATH_ENV,
+};
+
+const pathLookupCache = new Map<FfBinaryName, string>();
+// A miss is trusted briefly: callers probe per media file, and an install still shows up within seconds.
+const MISS_TTL_MS = 5_000;
+const lastMissAt = new Map<FfBinaryName, number>();
+
+function candidateFileName(candidate: string): string {
+  return candidate.split(/[\\/]/).at(-1)?.toLowerCase() ?? candidate.toLowerCase();
+}
+
+function chooseBestPathCandidate(
+  name: FfBinaryName,
+  candidates: readonly string[],
+): string | undefined {
+  const normalized = candidates.map((candidate) => candidate.trim()).filter(Boolean);
+  return (
+    normalized.find((candidate) => candidateFileName(candidate) === `${name}.exe`) ??
+    normalized.find((candidate) => candidateFileName(candidate) === name) ??
+    normalized.find((candidate) => !candidateFileName(candidate).match(/\.(cmd|bat)$/i)) ??
+    normalized[0]
+  );
+}
+
+const MACHO_CPU_X86_64 = 0x01000007;
+const ROSETTA_RUNTIME = "/Library/Apple/usr/libexec/oah/libRosettaRuntime";
+
+// A Mach-O built only for x86_64 (some npm packages ship one under darwin/arm64). A universal
+// binary or an unreadable file is not one.
+export function isX86OnlyMachO(file: string): boolean {
+  const header = Buffer.alloc(8);
+  try {
+    const fd = openSync(file, "r");
+    try {
+      readSync(fd, header, 0, 8, 0);
+    } finally {
+      closeSync(fd);
+    }
+  } catch {
+    return false;
+  }
+  return header.readUInt32LE(0) === 0xfeedfacf && header.readUInt32LE(4) === MACHO_CPU_X86_64;
+}
+
+// Without Rosetta an Apple Silicon Mac cannot run an x86_64 binary, so it must not be chosen.
+function runsOnThisMac(candidate: string): boolean {
+  if (process.platform !== "darwin" || process.arch !== "arm64" || existsSync(ROSETTA_RUNTIME)) {
+    return true;
+  }
+  if (!isX86OnlyMachO(candidate)) return true;
+  const name = basename(candidate) as FfBinaryName;
+  if (!skippedX86Binaries.has(name)) skippedX86Binaries.set(name, candidate);
+  return false;
+}
+
+const skippedX86Binaries = new Map<FfBinaryName, string>();
+
+/** The first x86_64-only `name` binary skipped on this Mac, for naming in the "not found" hint. */
+export function getSkippedX86Binary(name: FfBinaryName): string | undefined {
+  return skippedX86Binaries.get(name);
+}
+
+function isExecutablePathCandidate(candidate: string): boolean {
+  if (process.platform === "win32") return existsSync(candidate);
+  try {
+    accessSync(candidate, constants.X_OK);
+    return statSync(candidate).isFile() && runsOnThisMac(candidate);
+  } catch {
+    return false;
+  }
+}
+
+function scanPath(name: FfBinaryName): string | undefined {
+  const searchDirs = trustedPathDirs();
+  if (searchDirs.length === 0) return undefined;
+
+  const extensions =
+    process.platform === "win32"
+      ? [
+          ".exe",
+          ...new Set(
+            (process.env.PATHEXT ?? ".COM;.EXE;.BAT;.CMD")
+              .split(";")
+              .map((ext) => ext.trim().toLowerCase())
+              .filter(Boolean),
+          ),
+          "",
+        ]
+      : [""];
+  const candidates: string[] = [];
+  for (const dir of searchDirs) {
+    for (const ext of extensions) {
+      const candidate = join(dir, `${name}${ext}`);
+      if (isExecutablePathCandidate(candidate)) candidates.push(candidate);
+    }
+  }
+  return chooseBestPathCandidate(name, candidates);
+}
+
+// GUI/Dock/launchd-spawned processes on macOS don't inherit the shell PATH, so
+// a PATH lookup fails even when ffmpeg is installed via Homebrew. Probe the
+// well-known install dirs as a last resort. (No-op on Windows, where
+// installer-added PATH entries cover it.)
+const COMMON_BIN_DIRS =
+  process.platform === "win32"
+    ? []
+    : ["/opt/homebrew/bin", "/usr/local/bin", "/usr/bin", "/bin", "/snap/bin"];
+
+// The npm installer package comes last: its binaries are old builds, so any system install wins.
+function findInCommonDirsOrInstallerPackage(name: FfBinaryName): string | undefined {
+  for (const dir of COMMON_BIN_DIRS) {
+    const candidate = `${dir}/${name}`;
+    if (isTrustedExecutablePath(candidate) && existsSync(candidate) && runsOnThisMac(candidate)) {
+      return candidate;
+    }
+  }
+  return findInInstallerPackage(name);
+}
+
+function binaryFileName(name: FfBinaryName): string {
+  return process.platform === "win32" ? `${name}.exe` : name;
+}
+
+function tryResolve(fromFile: string, request: string): string | undefined {
+  try {
+    return createRequire(fromFile).resolve(request);
+  } catch {
+    return undefined;
+  }
+}
+
+// An @ffmpeg-installer / @ffprobe-installer package installed next to HyperFrames itself (a global
+// or npx install), located but never loaded. A copy in the working directory is project content,
+// so it is skipped. The platform package is resolved via the installer package first (pnpm layout).
+function findInInstallerPackage(name: FfBinaryName): string | undefined {
+  const project = import.meta.url;
+  const platformManifest = `@${name}-installer/${process.platform}-${process.arch}/package.json`;
+  const installer = tryResolve(project, `@${name}-installer/${name}/package.json`);
+  const manifest =
+    (installer && tryResolve(installer, platformManifest)) ?? tryResolve(project, platformManifest);
+  const candidate = manifest && join(dirname(manifest), binaryFileName(name));
+  return candidate && isTrustedExecutablePath(candidate) && isExecutablePathCandidate(candidate)
+    ? candidate
+    : undefined;
+}
+
+// No lookup program (`which`, `where`) runs by name: it could itself come from the project.
+function searchSystem(name: FfBinaryName): string | undefined {
+  return scanPath(name) ?? findInCommonDirsOrInstallerPackage(name);
+}
+
+function lookupOnSystem(name: FfBinaryName): string | undefined {
+  const cached = pathLookupCache.get(name);
+  if (cached) return cached;
+  if (Date.now() - (lastMissAt.get(name) ?? -Infinity) < MISS_TTL_MS) return undefined;
+  const found = searchSystem(name);
+  if (!found) {
+    lastMissAt.set(name, Date.now());
+    return undefined;
+  }
+  const resolved = resolve(found);
+  pathLookupCache.set(name, resolved);
+  return resolved;
+}
+
+export interface FindFfBinaryOptions {
+  /**
+   * How to treat an env override that points at a missing file: `true`
+   * reports the binary as not found (callers that surface an install hint or
+   * skip probing), `false`/unset returns the configured path as-is (callers
+   * that validate the override separately and want spawn errors to name the
+   * path the user configured).
+   */
+  configuredMustExist?: boolean;
+}
+
+/**
+ * Resolve an FFmpeg-family binary: env override first, then a native
+ * in-process PATH scan, then well-known Unix install dirs,
+ * then an `@ffmpeg-installer`/`@ffprobe-installer` package installed next to HyperFrames.
+ * Discovery never returns a file in the working directory (see trustedExecutable.ts).
+ * A found binary is cached for the process lifetime; a miss only for a few
+ * seconds, so a long-running server sees an install made after it started. The env
+ * override is re-read on every call.
+ */
+export function findFfBinary(
+  name: FfBinaryName,
+  options: FindFfBinaryOptions = {},
+): string | undefined {
+  const configured = process.env[ENV_BY_NAME[name]]?.trim();
+  if (configured) {
+    if (options.configuredMustExist && !existsSync(configured)) return undefined;
+    return resolve(configured);
+  }
+  return lookupOnSystem(name);
+}
+
+/** {@link findFfBinary}, or an ENOENT error naming the override. Never the bare name for the OS to look up. */
+export function requireFfBinary(name: FfBinaryName): string {
+  const found = findFfBinary(name);
+  if (found) return found;
+  const message = `[FFmpeg] ${name} not found. Install FFmpeg or set ${ENV_BY_NAME[name]} to its absolute path.`;
+  throw Object.assign(new Error(message), { code: "ENOENT" });
+}
+
+/** Test hook: drop cached system lookups so resolution can be re-exercised. */
+export function clearFfBinaryLookupCache(): void {
+  pathLookupCache.clear();
+  lastMissAt.clear();
+  skippedX86Binaries.clear();
+}
